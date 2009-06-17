@@ -83,9 +83,9 @@ namespace :db do
           f << `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} #{config[RAILS_ENV]["database"]}`
         elsif !config[RAILS_ENV]["export_database_host"].blank? && !config[RAILS_ENV]["export_database"].blank?
           #Additional parameter for evans proxied connection to export db directly
-          f << `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["export_database_host"]} -u #{config[RAILS_ENV]["username"]} -p#{config[RAILS_ENV]["password"]} #{config[RAILS_ENV]["export_database"]}#{additional_parameter}`
+          f << `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["export_database_host"]} -u #{config[RAILS_ENV]["username"]} -p#{config[RAILS_ENV]["password"]} #{config[RAILS_ENV]["export_database"]}`
         else
-          f << `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} -p#{config[RAILS_ENV]["password"]} #{config[RAILS_ENV]["database"]}#{additional_parameter}`
+          f << `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} -p#{config[RAILS_ENV]["password"]} #{config[RAILS_ENV]["database"]}`
         end
       end
       puts "SQL Dump completed --> #{sql_path}"
