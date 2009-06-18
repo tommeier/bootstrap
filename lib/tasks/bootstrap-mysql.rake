@@ -55,10 +55,8 @@ namespace :db do
       ActiveRecord::Base.establish_connection(config[RAILS_ENV])
       
       #Error checking
-      if config[RAILS_ENV]["host"].nil? || config[RAILS_ENV]["host"].chars.size <= 1
-        raise "Please ensure your config/database.yml file has a host for the database. eg. host = localhost"
-      end
-      
+      raise "Please ensure your config/database.yml file has a host for the database. eg. host = localhost"  if config[RAILS_ENV]["host"].blank?
+
       passed_file     = ENV['file']
       passed_filename = ENV['bootstrap'] == true ? 'bootstrap_data.sql' : ENV['file_name']
       sql_root        = File.join(RAILS_ROOT, 'db', 'bootstrap')
@@ -100,9 +98,7 @@ namespace :db do
     config = ActiveRecord::Base.configurations
     
       #Error checking
-      if config[RAILS_ENV]["host"].nil? || config[RAILS_ENV]["host"].chars.size <= 1
-        raise "Please ensure your config/database.yml file has a host for the database. eg. host = localhost"
-      end
+      raise "Please ensure your config/database.yml file has a host for the database. eg. host = localhost" if config[RAILS_ENV]["host"].blank? 
       
       sql_filename = ENV['file'] || File.join('db', 'bootstrap','bootstrap_data.sql')
       
@@ -110,41 +106,23 @@ namespace :db do
       puts "Attempting to load data... #{sql_filename}"
       
       sql_path = File.join(RAILS_ROOT, sql_filename)
-      
-      if !File.exists?(sql_path)
-        raise "Unable to find SQL file to load at location - #{sql_path}"
-      end
+     
+      raise "Unable to find SQL file to load at location - #{sql_path}" if !File.exists?(sql_path)
 
-    case config[RAILS_ENV]["adapter"]
-    when 'mysql'
-      ActiveRecord::Base.establish_connection(config[RAILS_ENV])
+      case config[RAILS_ENV]["adapter"]
+      when 'mysql'
+        ActiveRecord::Base.establish_connection(config[RAILS_ENV])
       
-      puts "Importing Database SQL..."
-      if config[RAILS_ENV]["password"].blank?
-        `mysql -f -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} #{config[RAILS_ENV]["database"]} < #{sql_filename}`
+        puts "Importing Database SQL..."
+        if config[RAILS_ENV]["password"].blank?
+          `mysql -f -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} #{config[RAILS_ENV]["database"]} < #{sql_filename}`
+        else
+          `mysql -f -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} -p"#{config[RAILS_ENV]["password"]}" #{config[RAILS_ENV]["database"]} < #{sql_filename}`
+        end
+        puts "Database load completed..."
       else
-        `mysql -f -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} -p"#{config[RAILS_ENV]["password"]}" #{config[RAILS_ENV]["database"]} < #{sql_filename}`
-      end
-      puts "Database load completed..."
-    else
-      raise "Task not supported by '#{config[RAILS_ENV]['adapter']}'" 
-    end
-  end
-  
-  namespace :test do
-        
-    desc 'Use bootstrap_data.sql to build initial database for specs with migrations'
-    task :custom_prepare => :environment do
-      #RSPEC changes
-      #To load sql dump with migrations for specs: edit rspec.rake and alter the spec_prereq variable
-      #for example : 
-      #spec_prereq = File.exist?(File.join(RAILS_ROOT, 'config', 'database.yml')) ? "db:test:custom_prepare" : :noop
-      RAILS_ENV = 'test'
-      ENV['file'] = File.join('db', 'bootstrap', 'bootstrap_data.sql')
-      Rake::Task['db:database_load'].invoke
-      Rake::Task['db:migrate'].invoke
-    end
-   
+        raise "Task not supported by '#{config[RAILS_ENV]['adapter']}'" 
+      end 
   end
    
 end
