@@ -17,21 +17,21 @@ Load a set of CSV's or YML's from "#{RAILS\_ROOT}/db/bootstrap", or pass it para
 
 ### Bootstrap - Database Dump / Load
 		rake db:database_dump 
-		rake db:database_dump RAILS_ENV=production 											#Dump specific environment using database.yml  
-		rake db:database_dump file=db/bootstrap/live_database_dump.sql 	#Dump to specified location
-		rake db:database_dump file_name=live_database_dump.sql					#Dump file to default bootstrap location
-		rake db:database_dump bootstrap=true														#Dump default bootstrap file (for use in specs and initial clean DB load - db/bootstrap/bootstrap_data.sql)
+		rake db:database_dump RAILS_ENV=production							#Dump specific environment using database.yml  
+		rake db:database_dump file=db/bootstrap/live_database_dump.sql		#Dump to specified location
+		rake db:database_dump file_name=live_database_dump.sql				#Dump file to default bootstrap location
+		rake db:database_dump bootstrap=true								#Dump default bootstrap file (for use in specs and initial clean DB load - db/bootstrap/bootstrap_data.sql)
 
 Create a mysql database dump of the environment in a specified or default location for loading later (or just as a backup file). This will overwrite any file by the same name, so if used for backup specify a unique filename. 
 
-		rake db:database_load 																					#Load default bootstrap file ( db/bootstrap/bootstrap\_data.sql)
-		rake db:database_load file=db/bootstrap/live_database_dump.sql	#Load the sql dump file specified  
+		rake db:database_load												#Load default bootstrap file ( db/bootstrap/bootstrap\_data.sql)
+		rake db:database_load file=db/bootstrap/live_database_dump.sql		#Load the sql dump file specified  
 
 Load, and overwrite, current database environment with a passed file name.
 
 ### Bootstrap - Reset Application
-		rake db:reset_app 																							#Reset the application to bootstrap data dump
-		rake db:reset_app file=db/bootstrap/live_database_dump.sql      #Reset the application to specified database dump
+		rake db:reset_app 													#Reset the application to bootstrap data dump
+		rake db:reset_app file=db/bootstrap/live_database_dump.sql      	#Reset the application to specified database dump
 
 For a clean start to your app, or a move back to a specified snapshot and then to have migrations run upon the data. Very useful for testing migrations on a production database snapshot. This process will:
 
