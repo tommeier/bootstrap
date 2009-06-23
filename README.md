@@ -42,7 +42,7 @@ For a clean start to your app, or a move back to a specified snapshot and then t
 
 ### Bootstrap - RSPEC Integration
 		
-To enable specs to be loaded from an SQL dump, with migrations, edit your rspec.rake file alter the spec\_prereq variable to run the following rake command: db:test:custom\_prepare (instead of db:test:prepare). This was you can run with a default data set, or your complete data set for thorough testing purposes.
+To enable specs to be loaded from an SQL dump, with migrations, edit your rspec.rake file and alter the spec\_prereq variable to run the following rake command: db:test:custom\_prepare (instead of db:test:prepare). With this you can run with a default data set, or your complete data set for thorough testing purposes simply by running : rake spec.
 
 ### Bootstrap - Data Extractors (BETA)
 		rake db:extract_data_migrations
