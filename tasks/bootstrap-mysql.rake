@@ -54,9 +54,7 @@ namespace :db do
     when 'mysql'
       ActiveRecord::Base.establish_connection(config[RAILS_ENV])
       
-      #Error checking
       raise "Please ensure your config/database.yml file has a host for the database. eg. host = localhost"  if config[RAILS_ENV]["host"].blank?
-
       passed_file     = ENV['file']
       passed_filename = ENV['bootstrap'] == true ? 'bootstrap_data.sql' : ENV['file_name']
       sql_root        = File.join(RAILS_ROOT, 'db', 'bootstrap')
@@ -79,9 +77,6 @@ namespace :db do
       File.open(sql_path, "w+") do |f|
         if config[RAILS_ENV]["password"].blank?
           f << `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} #{config[RAILS_ENV]["database"]}`
-        elsif !config[RAILS_ENV]["export_database_host"].blank? && !config[RAILS_ENV]["export_database"].blank?
-          #Additional parameter for evans proxied connection to export db directly
-          f << `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["export_database_host"]} -u #{config[RAILS_ENV]["username"]} -p#{config[RAILS_ENV]["password"]} #{config[RAILS_ENV]["export_database"]}`
         else
           f << `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} -p#{config[RAILS_ENV]["password"]} #{config[RAILS_ENV]["database"]}`
         end
@@ -124,5 +119,5 @@ namespace :db do
         raise "Task not supported by '#{config[RAILS_ENV]['adapter']}'" 
       end 
   end
-   
+    
 end

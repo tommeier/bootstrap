@@ -14,17 +14,10 @@ namespace :db do
     task :load => :environment do
       require 'active_record/fixtures'
       puts "Additional Parameters - FIXTURES=x,y - Specific files to load"
-      puts "Additional Parameters - DATASET=x - Load Dataset subdirectory x instead of default"
       puts "Additional Parameters - RESET=true/false - Delete all content in the table before loading fixtures"
       start = Time.now
-      if ENV['DATASET']
-        bootstrap_location = File.join(RAILS_ROOT, 'db', 'dataset', ENV['DATASET'])
-        if !File.exists?(bootstrap_location)
-          raise "Error - Unable to find dataset at location - #{bootstrap_location}"
-        end
-      else
-        bootstrap_location = File.join(RAILS_ROOT, 'db', 'bootstrap')
-      end
+      
+      bootstrap_location = File.join(RAILS_ROOT, 'db', 'bootstrap')
 
       if ENV['FIXTURES']
         fixture_files = ENV['FIXTURES'].split(/\s*,\s*/).map {|file| [File.join(bootstrap_location, file), file]}
