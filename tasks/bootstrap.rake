@@ -4,8 +4,7 @@ namespace :db do
     mkdir_p File.join(RAILS_ROOT, 'log')
     
     %w(environment db:migrate db:bootstrap:load tmp:create).each { |t| Rake::Task[t].execute task_args}
-    
-    DataGenerator.print_user_info
+ 
   end  
   
   namespace :bootstrap do
@@ -37,7 +36,7 @@ namespace :db do
       ActiveRecord::Base.connection.update "SET FOREIGN_KEY_CHECKS = 0"
 
       connection = ActiveRecord::Base.connection
-      connection.transaction(Thread.current['open_transactions'].to_i == 0) do
+      connection.transaction do
         
         fixtures = fixture_files.map do |fixture_path, table_name|
           fixture = Fixtures.new(connection, table_name, nil, fixture_path)
