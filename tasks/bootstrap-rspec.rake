@@ -7,7 +7,7 @@ namespace :db do
       #for example : 
       #spec_prereq = File.exist?(File.join(RAILS_ROOT, 'config', 'database.yml')) ? "db:test:custom_prepare" : :noop
       RAILS_ENV = 'test'
-      ENV['file'] = File.join('db', 'bootstrap', 'bootstrap_data.sql')
+      ENV['file'] ||= File.join('db', 'bootstrap', 'bootstrap_data.sql')
       Rake::Task['db:database_load'].invoke
       Rake::Task['db:migrate'].invoke
     end
