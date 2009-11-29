@@ -21,8 +21,8 @@ Load a set of CSV's or YML's from "#{RAILS\_ROOT}/db/bootstrap", or pass it para
 		rake db:database_dump file=db/bootstrap/live_database_dump.sql		#Dump to specified location
 		rake db:database_dump file_name=live_database_dump.sql				#Dump file to default bootstrap location
 		rake db:database_dump bootstrap=true								#Dump default bootstrap file (for use in specs and initial clean DB load - db/bootstrap/bootstrap_data.sql)
-		rake db:database_dump ignore_tables='messages,incidents'								#Dump file with certain tables ignored (useful when generating multiple dumps and concatenating)
-	  rake db:database_dump additional_params='-d,-t' #Pass in any additional parameters that mysqldump accepts (mysqldump --help)
+		rake db:database_dump ignore_tables='messages,incidents'			#Dump file with certain tables ignored (useful when generating multiple dumps and concatenating)
+		rake db:database_dump additional_params='-d,-t'						#Pass in any additional parameters that mysqldump accepts (mysqldump --help)
 
 rake db:database_dump RAIlS_ENV=live_export ignore_tables='messages,incidents,entities' additional_params='-d,-t'
 Create a mysql database dump of the environment in a specified or default location for loading later (or just as a backup file). This will overwrite any file by the same name, so if used for backup specify a unique filename.
