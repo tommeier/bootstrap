@@ -76,7 +76,7 @@ namespace :db do
 
       puts "Generating SQL Dump of Database - #{sql_path}"
 
-      default_sql_attrs = "-q --add-drop-table --add-locks --extended-insert --lock-tables"
+      default_sql_attrs = "-q --add-drop-table --add-locks --extended-insert --lock-tables --single-transaction"
       if ignore_tables.present?
         ignore_tables.each do |table_name|
            default_sql_attrs += " --ignore-table=#{config[RAILS_ENV]["database"]}.#{table_name.strip}"
@@ -90,12 +90,10 @@ namespace :db do
       end
 
       #--all-tablespaces
-      File.open(sql_path, "w+") do |f|
-        if config[RAILS_ENV]["password"].blank?
-          f << `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} #{config[RAILS_ENV]["database"]}`
-        else
-          f << `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} -p#{config[RAILS_ENV]["password"]} #{config[RAILS_ENV]["database"]}`
-        end
+      if config[RAILS_ENV]["password"].blank?
+        `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} #{config[RAILS_ENV]["database"]} > #{sql_path}`
+      else
+        `mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]} -p#{config[RAILS_ENV]["password"]} #{config[RAILS_ENV]["database"]} > #{sql_path}`
       end
       puts "SQL Dump completed --> #{sql_path}"
     else
