@@ -142,7 +142,7 @@ namespace :db do
       #Error checking
       raise "Please ensure your config/database.yml file has a host for the database. eg. host = localhost" if config[RAILS_ENV]["host"].blank?
 
-      backup_numbers  = ENV['total_backups'].present? ? ENV['total_backups'].to_i : 2
+      backup_numbers  = ENV['total_backups'].present? ? ENV['total_backups'].to_i : 5
       backup_location = ENV['backup_location'] || File.join(RAILS_ROOT, 'db', 'backup')
 
       #Create directories if they don't exist

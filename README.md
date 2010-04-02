@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Collection of useful rake tasks to make seeding, extracting, maintaining, backup and testing a database with migrations more easier.
+Collection of useful rake tasks to make seeding, extracting, maintaining, backup and testing a database with migrations easier.
 
 ## Install
 
@@ -48,6 +48,13 @@ For a clean start to your app, or a move back to a specified snapshot and then t
 To enable specs to be loaded from an SQL dump, with migrations, edit your rspec.rake file and alter the spec\_prereq variable to run the following rake command: db:test:custom\_prepare (instead of db:test:prepare). With this you can run with a default data set, or your complete data set for thorough testing purposes simply by running : rake spec.
 You can also load a different 'custom' spec database by running with the file parameter.
 eg. rake spec file=db/bootstrap/my_spec_fixtures.sql
+
+### Bootstrap - Database Backup
+		rake db:database_backup 													  #Backup the database to default location ('/db/backups'), to a maximum of 5 files
+		rake db:database_backup total_backups=2      	      #Maintain only a maximum of 2 backup files (keep most recent)
+		rake db:database_backup backup_location=db/custom_location/save_here  #Set the backup location to a custom location
+
+This task will save a database dump to a folder, and maintain a set number. Default is 5. This is best paired with a cron task to run at regular intervals.
 
 ### Bootstrap - Data Extractors (BETA)
 		rake db:extract_data_migrations
