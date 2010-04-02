@@ -134,4 +134,46 @@ namespace :db do
       end
   end
 
+  desc "Backup the mysql db to a set number of dump files"
+  task :database_backup do
+    load 'config/environment.rb' unless Object.const_defined?(:ActiveRecord)
+    config = ActiveRecord::Base.configurations
+
+      #Error checking
+      raise "Please ensure your config/database.yml file has a host for the database. eg. host = localhost" if config[RAILS_ENV]["host"].blank?
+
+      backup_numbers  = ENV['total_backups'].present? ? ENV['total_backups'].to_i : 2
+      backup_location = ENV['backup_location'] || File.join(RAILS_ROOT, 'db', 'backup')
+
+      #Create directories if they don't exist
+      Dir.mkdir backup_location if !File.exists?(backup_location)
+
+      puts "No 'total_backups' passed. Setting maximum backup files : #{backup_numbers}..." if ENV['total_backups'].blank?
+      puts "No 'backup_location' passed. Saving to : #{backup_location}..." if ENV['backup_location'].blank?
+
+      #Check for current releases
+      Dir.chdir(backup_location) do
+        #Delete records
+        sorted_files = Dir.glob("*.sql").sort_by {|f| test(?M, f)}
+        puts " -- Found #{sorted_files.size} backup files"
+        if sorted_files.size >= backup_numbers
+          puts "Cleaning up backups..."
+          sorted_files.reverse.each_with_index do |file, i|
+            if i >= (backup_numbers - 1)
+              FileUtils.rm( file )
+            end
+          end
+        end
+      end
+
+      sql_filename = "#{Time.now.strftime("%Y%m%d").to_s}_#{Time.now.strftime("%H%M%S")}.sql"
+      puts "Attempting to dump data... #{sql_filename}"
+
+      ENV['file'] = File.join(backup_location, sql_filename)
+      Rake::Task['db:database_dump'].invoke
+      Rake::Task['db:database_dump'].reenable
+
+      puts "Backup complete."
+  end
+
 end
