@@ -14,12 +14,15 @@ namespace :db do
     if File.exists?(sql_file_location)
 
       puts "Dropping database tables...\n"
+      Rake::Task['db:drop'].reenable
       Rake::Task['db:drop'].invoke
 
       puts "Creating database tables...\n"
+      Rake::Task['db:create'].reenable
       Rake::Task['db:create'].invoke
 
       puts "Loading database dump...\n"
+      Rake::Task['db:database_load'].reenable
       Rake::Task['db:database_load'].invoke
 
       puts "\n***** Database Loaded... *****\n\n"
@@ -34,6 +37,7 @@ namespace :db do
         puts "** Error - Unable to find the current migration file. Most likely cause is the database has migrations loaded that are beyond the code base. Please update the codebase."
         puts "** Attempting to run migration tasks."
       end
+      Rake::Task['db:migrate'].reenable
       Rake::Task['db:migrate'].invoke
     else
       raise "Error - Unable to find sql file to load : #{sql_file_location}"
@@ -170,8 +174,9 @@ namespace :db do
       puts "Attempting to dump data... #{sql_filename}"
 
       ENV['file'] = File.join(backup_location, sql_filename)
-      Rake::Task['db:database_dump'].invoke
       Rake::Task['db:database_dump'].reenable
+      Rake::Task['db:database_dump'].invoke
+
 
       puts "Backup complete."
   end
