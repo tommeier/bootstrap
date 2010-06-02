@@ -27,15 +27,16 @@ namespace :db do
 
       puts "\n***** Database Loaded... *****\n\n"
 
-      migrator = ActiveRecord::Migrator.new(:up, "db/migrate")
+      if Object.const_defined?(:ActiveRecord) #'nicety' for displaying some common errors
+        migrator = ActiveRecord::Migrator.new(:up, "db/migrate")
+        if migrator && migrator.current_migration && migrator.current_migration.filename
+          last_migration_file = migrator.current_migration.filename
 
-      if migrator && migrator.current_migration && migrator.current_migration.filename
-        last_migration_file = migrator.current_migration.filename
-
-        puts "** Loading migrations since #{last_migration_file} -->"
-      else
-        puts "** Error - Unable to find the current migration file. Most likely cause is the database has migrations loaded that are beyond the code base. Please update the codebase."
-        puts "** Attempting to run migration tasks."
+          puts "** Loading migrations since #{last_migration_file} -->"
+        else
+          puts "** Error - Unable to find the current migration file. Most likely cause is the database has migrations loaded that are beyond the code base. Please update the codebase."
+          puts "** Attempting to run migration tasks."
+        end
       end
       Rake::Task['db:migrate'].reenable
       Rake::Task['db:migrate'].invoke
@@ -51,12 +52,12 @@ namespace :db do
 
   desc "Dump the current database to an SQL file"
   task :database_dump do
-    load 'config/environment.rb' if !Object.const_defined?(:ActiveRecord)
-    config = ActiveRecord::Base.configurations
+    load 'config/environment.rb' unless Object.const_defined?(:ActiveRecord)
+    config = YAML::load(ERB.new(IO.read(File.join(RAILS_ROOT, 'config/database.yml'))).result)
 
     case config[RAILS_ENV]["adapter"]
     when 'mysql'
-      ActiveRecord::Base.establish_connection(config[RAILS_ENV])
+      #ActiveRecord::Base.establish_connection(config[RAILS_ENV])
 
       raise "Please ensure your config/database.yml file has a host for the database. eg. host = localhost"  if config[RAILS_ENV]["host"].blank?
       passed_file     = ENV['file']
@@ -108,7 +109,7 @@ namespace :db do
   desc "Loads the SQL dump into the current environment"
   task :database_load do
     load 'config/environment.rb' unless Object.const_defined?(:ActiveRecord)
-    config = ActiveRecord::Base.configurations
+    config = YAML::load(ERB.new(IO.read(File.join(RAILS_ROOT, 'config/database.yml'))).result)
 
       #Error checking
       raise "Please ensure your config/database.yml file has a host for the database. eg. host = localhost" if config[RAILS_ENV]["host"].blank?
@@ -141,7 +142,7 @@ namespace :db do
   desc "Backup the mysql db to a set number of dump files"
   task :database_backup do
     load 'config/environment.rb' unless Object.const_defined?(:ActiveRecord)
-    config = ActiveRecord::Base.configurations
+    config = YAML::load(ERB.new(IO.read(File.join(RAILS_ROOT, 'config/database.yml'))).result)
 
       #Error checking
       raise "Please ensure your config/database.yml file has a host for the database. eg. host = localhost" if config[RAILS_ENV]["host"].blank?
