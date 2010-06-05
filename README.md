@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Collection of useful rake tasks to make seeding, extracting, maintaining, backup and testing a database with migrations easier.
+Collection of useful rake tasks to make seeding, extracting, maintaining, backup and testing a database with migrations easier. Currently accepting MySQL & Postgres databases.
 
 ## Install
 
@@ -22,15 +22,18 @@ Load a set of CSV's or YML's from "#{RAILS\_ROOT}/db/bootstrap", or pass it para
 		rake db:database_dump file_name=live_database_dump.sql				#Dump file to default bootstrap location
 		rake db:database_dump bootstrap=true								#Dump default bootstrap file (for use in specs and initial clean DB load - db/bootstrap/bootstrap_data.sql)
 		rake db:database_dump ignore_tables='messages,incidents'			#Dump file with certain tables ignored (useful when generating multiple dumps and concatenating)
-		rake db:database_dump additional_params='-d,-t'						#Pass in any additional parameters that mysqldump accepts (mysqldump --help)
+		rake db:database_dump additional_params='-d,-t'						#Pass in any additional parameters that your database accepts (eg. mysqldump --help / pg_dump --help)
 
 rake db:database_dump RAIlS_ENV=live_export ignore_tables='messages,incidents,entities' additional_params='-d,-t'
-Create a mysql database dump of the environment in a specified or default location for loading later (or just as a backup file). This will overwrite any file by the same name, so if used for backup specify a unique filename.
+Create a database dump of the environment in a specified or default location for loading later (or just as a backup file). This will overwrite any file by the same name, so if used for backup specify a unique filename.
 
 		rake db:database_load												#Load default bootstrap file ( db/bootstrap/bootstrap\_data.sql)
 		rake db:database_load file=db/bootstrap/live_database_dump.sql		#Load the sql dump file specified
 
 Load, and overwrite, current database environment with a passed file name.
+
+Pass 'display=true' if you'd like to see the command being output to your database. For example:
+    rake db:database_dump display=true
 
 ### Bootstrap - Reset Application
 		rake db:reset_app 													#Reset the application to bootstrap data dump
@@ -68,7 +71,9 @@ Current contents of the database is extracted into numbered yml files, able to b
 
 ## Requirements
 
+ * ActiveRecord / DataMapper
+ * config/database.yml exists and set correctly
  * database.yml has a 'host' value set for environments
- * mysql - for database dump/load
+ * mysql/postgres/postgresql - for database dump/load
 
 Copyright (c) 2009 Tom Meier, released under the MIT license
