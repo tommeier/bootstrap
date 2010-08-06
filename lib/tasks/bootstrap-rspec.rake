@@ -10,11 +10,7 @@ namespace :db do
       #spec_prereq = File.exist?(File.join(RAILS_ROOT, 'config', 'database.yml')) ? "db:test:custom_prepare" : :noop
       Rails.env = 'test'
       ENV['file'] ||= File.join('db', 'bootstrap', 'bootstrap_data.sql')
-
-      run_rake('db:test:clone_structure') if defined?(ActiveRecord)
-      run_rake('db:database_load')
-      run_rake('db:migrate')
-
+      run_rake('db:reset_app') #drops/creates/loads/migrates
     end
 
   end

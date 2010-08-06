@@ -97,8 +97,8 @@ namespace :db do
       #--all-tablespaces
       display_and_execute("mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]}#{password_attrs.to_s} #{config[RAILS_ENV]["database"]} > #{sql_path}", display)
     when 'postgres', 'postgresql'
-      #pg_dump --help
-      default_sql_attrs = "-i --clean --blobs --inserts --column-inserts --no-owner"
+      #pg_dumpall --help
+      default_sql_attrs = "-i --clean --inserts --column-inserts --no-owner --no-privileges"
 
       if ignore_tables.present?
         ignore_tables.each do |table_name|
@@ -112,7 +112,7 @@ namespace :db do
         end
       end
 
-      display_and_execute("pg_dump #{default_sql_attrs} --host=#{config[RAILS_ENV]["host"]} --port=#{config[RAILS_ENV]["port"] || 5432} --username=#{config[RAILS_ENV]["username"]} -f #{sql_path} #{config[RAILS_ENV]["database"]}", display)
+      display_and_execute("pg_dumpall #{default_sql_attrs} --host=#{config[RAILS_ENV]["host"]} --port=#{config[RAILS_ENV]["port"] || 5432} --username=#{config[RAILS_ENV]["username"]} --file=#{sql_path} --database=#{config[RAILS_ENV]["database"]}", display)
     else
       raise "Error : Task not supported by '#{config[RAILS_ENV]['adapter']}'"
     end
