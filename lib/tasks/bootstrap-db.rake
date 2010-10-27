@@ -95,7 +95,7 @@ namespace :db do
 
       password_attrs = " -p#{config[RAILS_ENV]["password"]}" if config[RAILS_ENV]["password"].present?
       #--all-tablespaces
-      display_and_execute("mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]}#{password_attrs.to_s} #{config[RAILS_ENV]["database"]} > #{sql_path}", display)
+      display_and_execute("mysqldump #{default_sql_attrs} -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]}#{password_attrs.to_s} #{config[RAILS_ENV]["database"]} > \"#{sql_path}\"", display)
     when 'postgres', 'postgresql'
       #pg_dumpall --help
       default_sql_attrs = "-i --clean --inserts --column-inserts --no-owner --no-privileges"
@@ -112,7 +112,7 @@ namespace :db do
         end
       end
 
-      display_and_execute("pg_dumpall #{default_sql_attrs} --host=#{config[RAILS_ENV]["host"]} --port=#{config[RAILS_ENV]["port"] || 5432} --username=#{config[RAILS_ENV]["username"]} --file=#{sql_path} --database=#{config[RAILS_ENV]["database"]}", display)
+      display_and_execute("pg_dumpall #{default_sql_attrs} --host=#{config[RAILS_ENV]["host"]} --port=#{config[RAILS_ENV]["port"] || 5432} --username=#{config[RAILS_ENV]["username"]} --file=\"#{sql_path}\" --database=#{config[RAILS_ENV]["database"]}", display)
     else
       raise "Error : Task not supported by '#{config[RAILS_ENV]['adapter']}'"
     end
@@ -141,10 +141,10 @@ namespace :db do
     case config[RAILS_ENV]["adapter"]
     when 'mysql'
       password_attrs = " -p#{config[RAILS_ENV]["password"]}" if config[RAILS_ENV]["password"].present?
-      display_and_execute("mysql -f -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]}#{password_attrs.to_s} #{config[RAILS_ENV]["database"]} < #{sql_filename}", display)
+      display_and_execute("mysql -f -h #{config[RAILS_ENV]["host"]} -u #{config[RAILS_ENV]["username"]}#{password_attrs.to_s} #{config[RAILS_ENV]["database"]} < \"#{sql_path}\"", display)
     when 'postgres', 'postgresql'
       default_sql_attrs = "--single-transaction"
-      display_and_execute("psql #{default_sql_attrs} --host=#{config[RAILS_ENV]["host"]} --port=#{config[RAILS_ENV]["port"] || 5432} --dbname=#{config[RAILS_ENV]["database"]} --username=#{config[RAILS_ENV]["username"]} < #{sql_path}", display)
+      display_and_execute("psql #{default_sql_attrs} --host=#{config[RAILS_ENV]["host"]} --port=#{config[RAILS_ENV]["port"] || 5432} --dbname=#{config[RAILS_ENV]["database"]} --username=#{config[RAILS_ENV]["username"]} < \"#{sql_path}\"", display)
     else
       raise "Task not supported by '#{config[RAILS_ENV]['adapter']}'"
     end
